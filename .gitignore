@@ -1,0 +1,13 @@
+*.annot
+*.byte
+*.native
+*.cmo
+*.cma
+*.cmi
+*.a
+*.o
+*.cmx
+*.cmxs
+*.cmxa
+_build/
+*.swp
