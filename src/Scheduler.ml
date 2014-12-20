@@ -44,11 +44,12 @@ let select (sch : t) =
 
 let getfd e = match e with
     | Shutdown -> Unix.stderr
-    | Read c -> c
+    | Read c -> c 
     | Write c -> c
     | Exception c -> c
         
 let rec go (sch : t) =
+    let should_shut_down = shutdown_scheduled sch in
     let ev = select sch in
     let prepare e = 
         let fd = getfd e in
@@ -58,9 +59,11 @@ let rec go (sch : t) =
     let fire (fd, h) = h fd in
     let rec remove e = 
         if Hashtbl.mem sch.actions e then 
+        begin
             Hashtbl.remove sch.actions e;
             remove e;
+        end
     in
     ev |> List.iter remove ;
     to_fire |> List.iter fire ;
-    go sch ;;
+    if should_shut_down then () else go sch ;;

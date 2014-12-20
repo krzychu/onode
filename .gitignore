@@ -13,3 +13,4 @@ _build/
 *.swp
 *.data
 *.log
+tags

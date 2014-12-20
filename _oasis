@@ -9,7 +9,7 @@ License:     GPL
 Library onode
     Path:       src
     BuildTools: ocamlbuild
-    Modules: Scheduler, Async, AsyncStream 
+    Modules: Scheduler, Async, AsyncStream
 
 Executable echo_server
     Path: examples
@@ -18,3 +18,9 @@ Executable echo_server
     BuildDepends: unix, onode
     CompiledObject: native
     
+Executable async_file_access 
+    Path: examples
+    MainIs: async_file_access.ml
+    BuildTools: ocamlbuild
+    BuildDepends: unix, onode
+    NativeOpt: -g
