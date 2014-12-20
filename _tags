@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 652edde7f34dd7c55ced31ac2bc79537)
+# DO NOT EDIT (digest: 46672895cf2d7f1e006558fd4f2ee486)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -16,8 +16,8 @@
 # Library onode
 "src/onode.cmxs": use_onode
 # Executable echo_server
-"example/echo_server.native": pkg_unix
+"example/echo_server.native": package(unix)
 "example/echo_server.native": use_onode
-<example/*.ml{,i}>: pkg_unix
+<example/*.ml{,i}>: package(unix)
 <example/*.ml{,i}>: use_onode
 # OASIS_STOP

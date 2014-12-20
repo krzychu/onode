@@ -1,6 +1,7 @@
 OASISFormat: 0.4
 Name:        ONode
 Version:     0.0.1
+OCamlVersion: >= 4.02.0
 Synopsis:    Asynchroneous web server
 Authors:     Krzysztof Chrobak
 License:     GPL
