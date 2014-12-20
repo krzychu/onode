@@ -1,3 +1,5 @@
+(* develpment moved to src *)
+
 module Scheduler = struct
     type file_descr = Unix.file_descr 
 
@@ -73,10 +75,10 @@ module Async = struct
 
     let return (x : 't) : 't async = fun _ tcont -> tcont x
 
-    let await_read (fd : Scheduler.file_descr) : Scheduler.file_descr async = fun sch fdcont ->
+    let await_read (fd : Scheduler.file_descr) = fun sch fdcont ->
         Scheduler.schedule sch (Scheduler.Read fd) fdcont
 
-    let await_write (fd : Scheduler.file_descr) : Scheduler.file_descr async = fun sch fdcont ->
+    let await_write (fd : Scheduler.file_descr) = fun sch fdcont ->
         Scheduler.schedule sch (Scheduler.Write fd) fdcont
 
     let (>>=) (x : 't async) (f : 't -> 'r async) : 'r async = fun sch rcont -> 

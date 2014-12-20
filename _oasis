@@ -1,0 +1,19 @@
+OASISFormat: 0.4
+Name:        ONode
+Version:     0.0.1
+Synopsis:    Asynchroneous web server
+Authors:     Krzysztof Chrobak
+License:     GPL
+
+Library onode
+    Path:       src
+    BuildTools: ocamlbuild
+    Modules: Scheduler,Async
+
+Executable echo_server
+    Path: experiments
+    MainIs: echo_server.ml
+    BuildTools: ocamlbuild
+    BuildDepends: unix, onode
+    CompiledObject: native
+    

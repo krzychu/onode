@@ -11,3 +11,4 @@
 *.cmxa
 _build/
 *.swp
+*.data
