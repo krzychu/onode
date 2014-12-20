@@ -11,7 +11,7 @@ Library onode
     Modules: Scheduler,Async
 
 Executable echo_server
-    Path: experiments
+    Path: example 
     MainIs: echo_server.ml
     BuildTools: ocamlbuild
     BuildDepends: unix, onode
