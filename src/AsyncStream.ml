@@ -41,4 +41,7 @@ module In = struct
                 return out
         in 
         aux 0
+
+    let read_line (is : t) : string async =
+        let out = Bytes.create requested_len
 end
