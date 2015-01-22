@@ -32,7 +32,7 @@ module In = struct
         let rec aux remaining = 
             if remaining = 0
                 then return (Buffer.to_bytes out)
-                else read_if_needed remaining is >>= fun _ ->
+                else read_if_needed remaining is >>= fun ar ->
                     let n = min (ByteQueue.length is.queue) remaining in
                     Buffer.add_bytes out (ByteQueue.pop n is.queue);
                     aux (remaining - n)
@@ -40,10 +40,13 @@ module In = struct
         aux requested_len;
     ;;
 
+    exception End_of_stream;;
+
     let read_line (max_len : int) (is : t) : bytes async = 
         let out = Buffer.create max_len in
         let rec aux prev =
-            read_if_needed 1 is >>= fun _ ->
+            read_if_needed 1 is >>= fun k ->
+            if k = 0 then raise End_of_stream;
             match (prev, ByteQueue.pop_one is.queue) with
                 | None     , '\n' -> return ""
                 | None     , curr -> aux (Some curr)
