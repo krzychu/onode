@@ -9,8 +9,6 @@ let handler addr istream ostream =
         | In.Just x -> 
                 Out.write_all x ostream >>= fun () ->
                 Out.write_all "\n" ostream 
-
-
 ;;
 
 AsyncServer.start 12345 handler;

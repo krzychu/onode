@@ -1,8 +1,9 @@
 # OASIS_START
-# DO NOT EDIT (digest: 9409f6e72e46d29ce7512a7618070115)
+# DO NOT EDIT (digest: 50c0c0f1bc1a94182fe99bb76435ae0f)
 Scheduler
 Async
 AsyncStream
 ByteQueue
 AsyncServer
+Http
 # OASIS_STOP

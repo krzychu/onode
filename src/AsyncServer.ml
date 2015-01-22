@@ -1,7 +1,7 @@
 open Async;;
 open AsyncStream;;
 
-type handler = Unix.sockaddr -> In.t -> Out.t -> unit async ;;
+type handler = string -> In.t -> Out.t -> unit async ;;
 
 let get_readable_addr sa = match sa with
     | Unix.ADDR_INET (iaddr, port) -> Unix.string_of_inet_addr iaddr, port
@@ -24,14 +24,15 @@ let start (port : int) (h : handler) =
         let client_sock, client_addr = Unix.accept fd in
         let istream = In.create client_sock 1024 in
         let ostream = Out.create client_sock 1024 in
-        let task = 
-            h client_addr istream ostream >>= fun () -> 
-            Out.close ostream 
-        in
-       
+        
         let addr, port = get_readable_addr client_addr in
         Printf.printf "connection from %s port %d\n" addr port;
         flush stdout; 
+        
+        let task = 
+            h addr istream ostream >>= fun () -> 
+            Out.close ostream 
+        in
 
         run sch task;
         return () >>= main_loop

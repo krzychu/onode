@@ -9,7 +9,7 @@ License:     GPL
 Library onode
     Path:       src
     BuildTools: ocamlbuild
-    Modules: Scheduler, Async, AsyncStream, ByteQueue, AsyncServer
+    Modules: Scheduler, Async, AsyncStream, ByteQueue, AsyncServer, Http
 
 Executable echo_server
     Path: examples
