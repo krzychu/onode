@@ -1,29 +1,56 @@
 open Async ;;
 
 module In = struct
-    (*
-    let buffer_size = 4096
+    type t = {
+        fd: Unix.file_descr;
+        chunk_size: int;
+        queue: ByteQueue.t;
+    };;
 
-    type t = .t
+    let create fd chunk_size = {
+        fd = fd;
+        chunk_size = chunk_size;
+        queue = ByteQueue.create (2 * chunk_size);
+    };;
    
-    let read_more (is : t) : unit async = 
+    let read_more (is : t) : int async = 
         await_read is.fd >>= fun fd -> 
-        let buffer = Bytes.create buffer_size in 
-        let num_read = Unix.read fd buf 0 buffer_size in
+        let chunk = Bytes.create is.chunk_size in 
+        let num_read = Unix.read fd chunk 0 is.chunk_size in
+        ByteQueue.push chunk 0 num_read is.queue;
+        return num_read
+    ;;
 
-        return () ;;
+    let read_if_needed (size : int) (is : t) : int async = 
+        if ByteQueue.length is.queue >= size
+            then return size
+            else read_more is
+    ;;
 
     let read (requested_len : int) (is : t) : bytes async = 
-        let out = Bytes.create requested_len in
-        let rec aux offset = 
-            let remaining = requested_len - offset in
-            let copied = blit is out offset remaining in 
-            if copied < remaining then
-                read_more is >>= fun () -> aux (offset + copied) 
-            else
-                return out
+        let out = Buffer.create requested_len in
+        let rec aux remaining = 
+            if remaining = 0
+                then return (Buffer.to_bytes out)
+                else read_if_needed remaining is >>= fun _ ->
+                    let n = min (ByteQueue.length is.queue) remaining in
+                    Buffer.add_bytes out (ByteQueue.pop n is.queue);
+                    aux (remaining - n)
         in 
-        aux 0
-        *)
+        aux requested_len;
+    ;;
 
+    let read_line (max_len : int) (is : t) : bytes async = 
+        let out = Buffer.create max_len in
+        let rec aux prev =
+            read_if_needed 1 is >>= fun _ ->
+            match (prev, ByteQueue.pop_one is.queue) with
+                | None     , '\n' -> return ""
+                | None     , curr -> aux (Some curr)
+                | Some '\r', '\n' -> return (Buffer.to_bytes out)
+                | Some prev, '\n' -> Buffer.add_char out prev; return (Buffer.to_bytes out)
+                | Some prev, curr -> Buffer.add_char out prev; aux (Some curr)
+        in
+        aux None
+     ;; 
 end

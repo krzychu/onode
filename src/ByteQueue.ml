@@ -16,6 +16,8 @@ let capacity queue = Bytes.length queue.data
 
 let length queue = !(queue.length)
 
+let empty queue = (length queue) = 0
+
 let space queue = (capacity queue) - (length queue)
 
 let start_ptr queue = !(queue.start)
