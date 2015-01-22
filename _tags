@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 31be4ba4a29c476b34bdacf1f4f8e282)
+# DO NOT EDIT (digest: 6823c3571c50c62de630347ed1ed8774)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -15,21 +15,30 @@
 "_darcs": not_hygienic
 # Library onode
 "src/onode.cmxs": use_onode
+<src/*.ml{,i}>: package(str)
+<src/*.ml{,i}>: package(unix)
 # Executable echo_server
+"examples/echo_server.native": package(str)
 "examples/echo_server.native": package(unix)
 "examples/echo_server.native": use_onode
 # Executable async_file_access
 "examples/async_file_access.byte": oasis_executable_async_file_access_native
 <examples/*.ml{,i}>: oasis_executable_async_file_access_native
+"examples/async_file_access.byte": package(str)
 "examples/async_file_access.byte": package(unix)
 "examples/async_file_access.byte": use_onode
+<examples/*.ml{,i}>: package(str)
 <examples/*.ml{,i}>: package(unix)
 <examples/*.ml{,i}>: use_onode
 # Executable test_runner
 "test/test_runner.byte": oasis_executable_test_runner_native
 <test/*.ml{,i}>: oasis_executable_test_runner_native
 "test/test_runner.byte": package(oUnit)
+"test/test_runner.byte": package(str)
+"test/test_runner.byte": package(unix)
 "test/test_runner.byte": use_onode
 <test/*.ml{,i}>: package(oUnit)
+<test/*.ml{,i}>: package(str)
+<test/*.ml{,i}>: package(unix)
 <test/*.ml{,i}>: use_onode
 # OASIS_STOP

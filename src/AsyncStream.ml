@@ -49,10 +49,8 @@ end
 
 module In = struct
 
-    type optbytes = Just of bytes | EOF ;;
-
-    let return_optbytes x = return (Just x)
-    let return_optbuffer x = return_optbytes (Buffer.to_bytes x)
+    let return_bytes x = return (Some x)
+    let return_buffer x = return_bytes (Buffer.to_bytes x)
 
     type t = {
         fd: Unix.file_descr;
@@ -85,13 +83,13 @@ module In = struct
             else read_more is
     ;;
 
-    let read (requested_len : int) (is : t) : optbytes async = 
+    let read (requested_len : int) (is : t) : bytes option async = 
         let out = Buffer.create requested_len in
         let rec aux remaining = 
             if remaining = 0
-                then return_optbuffer out
+                then return_buffer out
                 else read_if_needed remaining is >>= fun ar ->
-                    if ar = 0 then return EOF else
+                    if ar = 0 then return None else
                         let n = min (ByteQueue.length is.queue) remaining in
                         Buffer.add_bytes out (ByteQueue.pop n is.queue);
                         aux (remaining - n)
@@ -99,16 +97,16 @@ module In = struct
         aux requested_len;
     ;;
 
-    let read_line (max_len : int) (is : t) : optbytes async = 
+    let read_line (max_len : int) (is : t) : bytes option async = 
         let out = Buffer.create max_len in
         let rec aux prev =
             read_if_needed 1 is >>= fun k ->
-            if k = 0 then return EOF else 
+            if k = 0 then return None else 
                 match (prev, ByteQueue.pop_one is.queue) with
-                    | None     , '\n' -> return_optbytes "" 
+                    | None     , '\n' -> return_bytes "" 
                     | None     , curr -> aux (Some curr)
-                    | Some '\r', '\n' -> return_optbuffer out
-                    | Some prev, '\n' -> Buffer.add_char out prev; return_optbuffer out
+                    | Some '\r', '\n' -> return_buffer out
+                    | Some prev, '\n' -> Buffer.add_char out prev; return_buffer out
                     | Some prev, curr -> Buffer.add_char out prev; aux (Some curr)
         in
         aux None

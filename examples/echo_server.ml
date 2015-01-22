@@ -4,9 +4,9 @@ open AsyncStream;;
 let handler addr istream ostream = 
     In.read_line 100 istream >>= fun ol ->
     match ol with
-        | In.EOF -> 
+        | None -> 
                 return ()
-        | In.Just x -> 
+        | Some x -> 
                 Out.write_all x ostream >>= fun () ->
                 Out.write_all "\n" ostream 
 ;;
