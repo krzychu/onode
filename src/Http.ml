@@ -102,28 +102,75 @@ end
 
 
 module Response = struct
-    type status_code = 
+    type status = 
         | OK
         | BadRequest
-        | NotImplemented
-        | InternalError
-        | Number of int
+        | NotFound
+        | Code of int
     ;;
 
+
+    let status_to_int s = match s with
+        | OK -> 200
+        | BadRequest -> 400
+        | NotFound -> 404
+        | Code x -> x
+    ;;
+
+
+    let status_to_reason_phrase s = match s with
+        | OK -> "Awesome"
+        | BadRequest -> "WTF"
+        | NotFound -> "..."
+        | Code _ -> "look it up yourself"
+    ;;
+
+
     type t = {
-        code: status_code;
-        header: (string, string) Hashtbl.t;
+        status: status;
+        header: (string * string) list; 
     } ;;
 
-    let from_code code = {
-        code = code;
-        header = Hashtbl.create 0;
+
+    let create status header = {
+        status = status;
+        header = header; 
     } ;;
 
-    let write response os = return ()
+
+    let from_status status = create status [] 
+
+    
+    let write_status_line status os =
+        let code = status_to_int status in
+        let phrase = status_to_reason_phrase status in
+        let line = Printf.sprintf "HTTP/1.0 %d %s\r\n" code phrase in
+        Out.write_all line os
+    ;;
+
+
+    let write_status_header_line p os =
+        let k, v = p in
+        let line = Printf.sprintf "%s : %s\r\n" k v in
+        Out.write_all line os
+    ;;
+
+
+    let write_header header os = 
+        sequence header (fun p -> write_status_header_line p os)
+    ;;
+
+
+    let write response os = 
+        write_status_line response.status os >>= fun () ->
+        write_header response.header os
+    ;;
+
 end
 
+
 type handler = Request.t -> (Response.t -> Out.t async) -> unit async
+
 
 let async_handler (h : handler) : AsyncServer.handler = fun addr is os -> 
     Request.read addr is >>= fun request -> 
@@ -132,6 +179,6 @@ let async_handler (h : handler) : AsyncServer.handler = fun addr is os ->
         return os
     in
     match request with
-        | None -> Response.write (Response.from_code Response.BadRequest) os
+        | None -> Response.write (Response.from_status Response.BadRequest) os
         | Some request -> h request sender
 ;;

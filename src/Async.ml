@@ -18,6 +18,12 @@ let (>>?) (x : 't option async) (f : 't -> 'r option async) : 'r option async = 
         | None -> ()
     in x sch tcont
 
+let rec sequence (xs : 't list) (f : 't -> unit async) : unit async =
+    match xs with
+        | x :: xs -> f x >>= fun () -> sequence xs f 
+        | [] -> return ()
+;;
+
 let shutdown : unit async = fun sch ucont ->
     Scheduler.schedule sch Scheduler.Shutdown (fun fd -> ucont ())
 
