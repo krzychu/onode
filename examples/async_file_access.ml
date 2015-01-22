@@ -1,6 +1,7 @@
 open AsyncStream ;;
 open Async;;
 
+(*
 let fd = Unix.openfile "ttt" [Unix.O_RDONLY; Unix.O_NONBLOCK] 0 ;;
 
 let stream = In.create fd 1024 ;;
@@ -16,3 +17,4 @@ let cat =
 let sch = Scheduler.create 0.1 ;;
 run sch cat;
 Scheduler.go sch;
+*)

@@ -1,33 +1,16 @@
 open Async ;;
 
 module In = struct
-    type t = {
-        fd : Unix.file_descr;
-        buffer : bytes;
-        buflen : int ref;
-    };;
+    (*
+    let buffer_size = 4096
 
-    let create fd chunk_size = {
-        fd = fd;
-        buffer = Bytes.create (2 * chunk_size);
-        buflen = ref 0;
-    } ;;
-
-    let chunk_size (is : t) : int = (Bytes.length is.buffer) / 2
-
-    let blit (is : t) (dst : bytes) (dstoff : int) (len : int) : int =
-        let src_len = !(is.buflen) in
-        let to_blit = min src_len len in
-        let src = is.buffer in
-        Bytes.blit src 0 dst dstoff to_blit;
-        Bytes.blit src to_blit src 0 (src_len - to_blit);
-        to_blit ;;
-
+    type t = .t
+   
     let read_more (is : t) : unit async = 
         await_read is.fd >>= fun fd -> 
-        let bl = !(is.buflen) in
-        let num_read = Unix.read fd is.buffer bl (chunk_size is) in
-        is.buflen := bl + num_read;
+        let buffer = Bytes.create buffer_size in 
+        let num_read = Unix.read fd buf 0 buffer_size in
+
         return () ;;
 
     let read (requested_len : int) (is : t) : bytes async = 
@@ -41,5 +24,6 @@ module In = struct
                 return out
         in 
         aux 0
+        *)
 
 end
