@@ -10,25 +10,28 @@ Library onode
     Path:       src
     BuildTools: ocamlbuild
     BuildDepends: unix, str
-    Modules: Scheduler, Async, AsyncStream, ByteQueue, AsyncServer, Http
+    Modules: Scheduler, Async, AsyncStream, ByteQueue, AsyncServer, Http, Log
 
 Executable echo_server
     Path: examples
     MainIs: echo_server.ml
     BuildTools: ocamlbuild
     BuildDepends: onode
-    CompiledObject: native
+ 
+Executable http_server
+    Path: examples
+    MainIs: http_server.ml
+    BuildTools: ocamlbuild
+    BuildDepends: onode
     
 Executable async_file_access 
     Path: examples
     MainIs: async_file_access.ml
     BuildTools: ocamlbuild
     BuildDepends: onode
-    NativeOpt: -g
 
 Executable test_runner
     Path: test
     MainIs: test_runner.ml
     BuildTools: ocamlbuild
     BuildDepends: onode, oUnit (>= 1.0.2)
-    NativeOpt: -g
