@@ -3,11 +3,7 @@ open AsyncStream;;
 
 module Request = struct
 
-    type request_method = 
-        | Get
-        | Custom of string
-    ;;
-
+    type request_method = string ;;
 
     type t = {
         meth : request_method;
@@ -36,10 +32,7 @@ module Request = struct
     ;; 
 
 
-    let parse_request_method s = match String.uppercase s with
-        | "GET" -> Get
-        | s     -> Custom s
-    ;;
+    let parse_request_method = String.uppercase ;;
 
 
     let request_line_rx = Str.regexp_case_fold "\\([a-z]+\\) +\\([^ ]+\\)"
@@ -157,7 +150,8 @@ module Response = struct
 
 
     let write_header header os = 
-        sequence header (fun p -> write_status_header_line p os)
+        sequence header (fun p -> write_status_header_line p os) >>= fun () ->
+        Out.write_all "\r\n" os
     ;;
 
 
@@ -169,16 +163,20 @@ module Response = struct
 end
 
 
-type handler = Request.t -> (Response.t -> Out.t async) -> unit async
+type handler = Log.t -> Request.t -> (Response.t -> Out.t async) -> unit async
 
 
-let async_handler (h : handler) : AsyncServer.handler = fun addr is os -> 
+let async_handler (h : handler) : AsyncServer.handler = fun log addr is os -> 
     Request.read addr is >>= fun request -> 
     let sender response_header = 
         Response.write response_header os >>= fun () -> 
         return os
     in
     match request with
-        | None -> Response.write (Response.from_status Response.BadRequest) os
-        | Some request -> h request sender
+        | None -> 
+                log Log.Debug "Bad Request" >>= fun () -> 
+                Response.write (Response.from_status Response.BadRequest) os
+        | Some r -> 
+                log Log.Debug (Printf.sprintf "%s %s" r.Request.meth r.Request.url) >>= fun () ->
+                h log r sender
 ;;

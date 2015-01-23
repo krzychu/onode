@@ -21,14 +21,15 @@ let level_code l = match l with
 ;;
  
 
-type t = level * string -> unit async ;;
+type t = level -> string -> unit async ;;
 
+let openfile path = Unix.openfile path [Unix.O_WRONLY; Unix.O_NONBLOCK; Unix.O_CREAT; Unix.O_TRUNC] 0o640 ;;
 
 let create (fd : Unix.file_descr) (min_level : level) (prefix : string) : t =
     let ostream = Out.create fd 1024 in
     let min_code = level_code min_level in
 
-    fun (l, s) -> 
+    fun l s -> 
         if level_code l < min_code 
             then return ()
             else

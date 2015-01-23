@@ -3,11 +3,11 @@ open Http;;
 
 let parses_request_line_correctly cxt = 
     assert_equal 
-        (Some (Request.Custom "OPTIONS", "*")) 
+        (Some ("OPTIONS", "*")) 
         (Request.parse_request_line "OPTIONS * HTTP/1.1");
 
     assert_equal 
-        (Some (Request.Get, "/")) 
+        (Some ("GET", "/")) 
         (Request.parse_request_line "GET / HTTP/1.0");
 ;;
 
