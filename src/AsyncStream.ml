@@ -97,6 +97,27 @@ module In = struct
         aux requested_len;
     ;;
 
+    let read_all (is : t) : bytes async = 
+        let buf = Buffer.create 0 in
+
+        let copy_all () =
+            let len = ByteQueue.length is.queue in
+            Buffer.add_bytes buf (ByteQueue.pop len is.queue);
+        in
+        copy_all ();
+
+        let rec aux () = 
+            read_more is >>= fun cnt ->
+            if cnt = 0 
+                then 
+                    return (Buffer.to_bytes buf)
+                else 
+                    return (copy_all ()) >>= fun () -> 
+                    aux ();
+        in
+        aux ()
+    ;;   
+
     let read_line (max_len : int) (is : t) : bytes option async = 
         let out = Buffer.create max_len in
         let rec aux prev =

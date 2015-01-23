@@ -13,8 +13,7 @@ let http_handler log request write_response =
     }
     in
     write_response r                            >>= fun ostream ->
-    Out.write_all "all hail to ZOD\n" ostream   >>= fun () -> 
-    return ()
+    Out.write_all "all hail to ZOD\n" ostream 
 ;;
 
 let log_fd = Log.openfile "log.txt" ;;
