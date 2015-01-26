@@ -10,7 +10,14 @@ Library onode
     Path:       src
     BuildTools: ocamlbuild
     BuildDepends: unix, str
-    Modules: Scheduler, Async, AsyncStream, ByteQueue, AsyncServer, Http, Log
+    Modules: Scheduler, 
+             Async, 
+             AsyncStream, 
+             ByteQueue, 
+             AsyncServer, 
+             Http, 
+             Log,
+             Path
 
 Executable echo_server
     Path: examples
