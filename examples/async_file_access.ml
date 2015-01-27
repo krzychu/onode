@@ -2,7 +2,7 @@ open AsyncStream ;;
 open Async;;
 
 let infd = Unix.openfile "examples/heart_of_darkness.txt" [Unix.O_RDONLY; Unix.O_NONBLOCK] 0 ;;
-let outfd = Unix.openfile "copy.txt" [Unix.O_WRONLY; Unix.O_NONBLOCK] 0 ;;
+let outfd = Unix.openfile "copy.txt" [Unix.O_WRONLY; Unix.O_NONBLOCK; Unix.O_CREAT] 0o640 ;;
 
 let istream = In.create infd 1024 ;;
 let ostream = Out.create outfd 1024 ;;

@@ -1,5 +1,4 @@
 open OUnit;;
-open ErrorMonad;;
 
 let assert_exception (e : exn) (x : 't) (f : 't -> 'r) : unit = 
     try

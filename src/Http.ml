@@ -107,8 +107,7 @@ module Response = struct
         | OK -> 200
         | BadRequest -> 400
         | NotFound -> 404
-        | Code x -> x
-    ;;
+        | Code x -> x ;;
 
 
     let status_to_reason_phrase s = match s with

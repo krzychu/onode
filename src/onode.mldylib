@@ -1,10 +1,11 @@
 # OASIS_START
-# DO NOT EDIT (digest: 876fdbd2118fa54696d70f79490792bf)
+# DO NOT EDIT (digest: 812cf7c97f46fd000f540212d0ff8afe)
 Scheduler
 Async
 AsyncStream
 ByteQueue
 AsyncServer
+StaticFileHandler
 Http
 Log
 Path

@@ -9,6 +9,12 @@ let is_safe parts =
 ;;
 
 
+exception Not_safe of string list;;
+let ensure_safe parts = 
+    if is_safe parts then () else raise (Not_safe parts)
+;;
+
+
 exception Too_short;;
 let last parts = 
     let i = List.length parts - 1 in
