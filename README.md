@@ -4,6 +4,7 @@ Asynchronous web server written in OCaml.
 ## Scope
 This project aimed to recreate a small subset of Nodejs functionality in OCaml for
 educational purposes. It contains:
+
 * Asynchronous IO scheduler
 * Asynchronous IO streams
 * Simple Http library
