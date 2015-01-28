@@ -31,6 +31,12 @@ Executable http_server
     MainIs: http_server.ml
     BuildTools: ocamlbuild
     BuildDepends: onode
+
+Executable static_file_server
+    Path: examples
+    MainIs: static_file_server.ml
+    BuildTools: ocamlbuild
+    BuildDepends: onode
     
 Executable async_file_access 
     Path: examples

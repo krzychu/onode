@@ -16,10 +16,11 @@ module Request = struct
 
     let read_all_header_lines (is : In.t) : string list option async = 
         let rec aux acc = 
-            In.read_line 4096 is >>? fun line ->
+            In.read_line 4096 is >>= fun line ->
             match line with
-                | "" -> return (Some (List.rev acc))
-                | line -> aux (line :: acc)
+                | None -> return None
+                | Some "" -> return (Some (List.rev acc))
+                | Some line -> aux (line :: acc)
         in
         aux []
     ;;
@@ -70,8 +71,9 @@ module Request = struct
 
     let parse lines =
         match lines with
-            | [] -> None
-            | x :: xs -> 
+            | None -> None
+            | Some [] -> None
+            | Some (x :: xs) -> 
                     parse_request_line x >? fun (meth, url) ->
                     parse_request_header xs >? fun header -> 
                     Some (meth, url, header)
@@ -79,7 +81,7 @@ module Request = struct
 
 
     let read (addr : string) (is : In.t) : t option async = 
-        read_all_header_lines is >>? fun lines ->
+        read_all_header_lines is >>= fun lines ->
         match parse lines with
             | None -> return None
             | Some (meth, url, header) -> return ( 

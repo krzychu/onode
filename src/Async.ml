@@ -12,12 +12,6 @@ let await_write (fd : Scheduler.file_descr) = fun sch fdcont ->
 let (>>=) (x : 't async) (f : 't -> 'r async) : 'r async = fun sch rcont -> 
     let tcont t = (f t) sch rcont in x sch tcont
 
-let (>>?) (x : 't option async) (f : 't -> 'r option async) : 'r option async = fun sch rcont -> 
-    let tcont t = match t with
-        | Some t -> (f t) sch rcont
-        | None -> ()
-    in x sch tcont
-
 let rec sequence (xs : 't list) (f : 't -> unit async) : unit async =
     match xs with
         | x :: xs -> f x >>= fun () -> sequence xs f 

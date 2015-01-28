@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: bcf1684f60b0213ed987234b96bcc23e)
+# DO NOT EDIT (digest: eca12526b80957d16abe0ff2279d3f7d)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -25,6 +25,10 @@
 "examples/http_server.byte": package(str)
 "examples/http_server.byte": package(unix)
 "examples/http_server.byte": use_onode
+# Executable static_file_server
+"examples/static_file_server.byte": package(str)
+"examples/static_file_server.byte": package(unix)
+"examples/static_file_server.byte": use_onode
 # Executable async_file_access
 "examples/async_file_access.byte": package(str)
 "examples/async_file_access.byte": package(unix)

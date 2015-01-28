@@ -24,7 +24,7 @@ let normalize parts = match parts with
 ;;
 
 
-let create (path : string) : Http.handler = fun log req write_response -> 
+let create () : Http.handler = fun log req write_response -> 
     let respond_with status =
         write_response (Response.from_status status)
     in
@@ -35,7 +35,6 @@ let create (path : string) : Http.handler = fun log req write_response ->
         return None
     in
 
-
     let try_get_target req = 
         try
             let parts = Path.split req.Request.url in
@@ -43,7 +42,7 @@ let create (path : string) : Http.handler = fun log req write_response ->
             let normalized = normalize parts in
             let extension = Path.get_extension normalized in
             let content_type = get_content_type extension in
-            let path = Path.join parts in
+            let path = Path.join normalized in
             return (Some (content_type, path))
        with 
             | e -> fail_with e Response.BadRequest
@@ -80,13 +79,23 @@ let create (path : string) : Http.handler = fun log req write_response ->
         return (Some ())
     in
 
+
+    let (>>?) x f = fun sch rcont -> 
+        let tcont t = match t with
+            | None   -> rcont None
+            | Some x -> (f x) sch rcont
+        in
+        x sch tcont
+    in
+
+
     let out =
-        req |>
-        try_get_target                              >>? fun (content_type, path) ->
-        try_open_fd path                            >>? fun (fd) ->
-        try_read_all fd                             >>? fun (content) ->
+        try_get_target req                      >>? fun (content_type, path) ->
+        try_open_fd path                        >>? fun (fd) ->
+        try_read_all fd                         >>? fun (content) ->
         try_respond content_type content            
     in
 
-    out >>= fun _ -> return ()
+    out >>= fun _ -> 
+        return ()
 ;;
