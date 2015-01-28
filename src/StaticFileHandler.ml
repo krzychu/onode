@@ -45,7 +45,7 @@ let create () : Http.handler = fun log req write_response ->
             let path = Path.join normalized in
             return (Some (content_type, path))
        with 
-            | e -> fail_with e Response.BadRequest
+            | e -> fail_with e Response.NotFound
     in
 
     let try_open_fd path = 
@@ -80,15 +80,6 @@ let create () : Http.handler = fun log req write_response ->
     in
 
 
-    let (>>?) x f = fun sch rcont -> 
-        let tcont t = match t with
-            | None   -> rcont None
-            | Some x -> (f x) sch rcont
-        in
-        x sch tcont
-    in
-
-
     let out =
         try_get_target req                      >>? fun (content_type, path) ->
         try_open_fd path                        >>? fun (fd) ->
@@ -96,6 +87,5 @@ let create () : Http.handler = fun log req write_response ->
         try_respond content_type content            
     in
 
-    out >>= fun _ -> 
-        return ()
+    out >>= fun _ -> return ()
 ;;
